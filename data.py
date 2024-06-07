@@ -8,8 +8,16 @@ class Data:
         self.BOWLERS=pd.read_csv('bowler_data.csv')
         self.BATSMEN=pd.read_csv('batsman_data.csv')
         self.TRAIN=pd.read_csv('train_data.csv')
-        self.TEST=pd.reaad_csv('test_data.csv')
+        self.TEST=pd.read_csv('test_data.csv')
         self.MATCHLEVEL=pd.read_csv('match_level_data.csv')
+
+        self.BOWLERS['match_dt']=pd.to_datetime(self.BOWLERS['match_dt'],dayfirst=True)
+        self.BATSMEN['match_dt']=pd.to_datetime(self.BATSMEN['match_dt'],dayfirst=True)
+        self.TRAIN['match_dt']=pd.to_datetime(self.TRAIN['match_dt'],dayfirst=True)
+        self.TEST['match_dt']=pd.to_datetime(self.TEST['match_dt'],dayfirst=True)
+        self.MATCHLEVEL['match_dt']=pd.to_datetime(self.MATCHLEVEL['match_dt'],dayfirst=True)
+
+        print(f"No of bowlers: {len(self.BOWLERS)}")
 
         self.bowl=self.BOWLERS
         self.bat=self.BATSMEN
@@ -19,11 +27,15 @@ class Data:
 
     def initialize(self,date):
 
-        self.bowl=self.BOWLERS[self.BOWLERS['match_dt']<date]
-        self.bat=self.BATSMEN[self.BATSMEN['match_dt']<date]
-        self.train=self.TRAIN[self.TRAIN['match_dt']<date]
-        self.test=self.TEST[self.TEST['match_dt']<date]
-        self.matchlevel=self.MATCHLEVEL[self.MATCHLEVEL['match_dt']<date]
+        pd_date_time=pd.to_datetime(date,dayfirst=True)
+        
+        self.bowl=self.BOWLERS[self.BOWLERS['match_dt']<pd_date_time]
+        self.bat=self.BATSMEN[self.BATSMEN['match_dt']<pd_date_time]
+        self.train=self.TRAIN[self.TRAIN['match_dt']<pd_date_time]
+        self.test=self.TEST[self.TEST['match_dt']<pd_date_time]
+        self.matchlevel=self.MATCHLEVEL[self.MATCHLEVEL['match_dt']<pd_date_time]
+
+        print(f"No of bowlers: {len(self.bowl)}")
     
 
         
