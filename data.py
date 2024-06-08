@@ -17,8 +17,6 @@ class Data:
         self.TEST['match_dt']=pd.to_datetime(self.TEST['match_dt'],dayfirst=True)
         self.MATCHLEVEL['match_dt']=pd.to_datetime(self.MATCHLEVEL['match_dt'],dayfirst=True)
 
-        print(f"No of bowlers: {len(self.BOWLERS)}")
-
         self.bowl=self.BOWLERS
         self.bat=self.BATSMEN
         self.train=self.TRAIN
@@ -34,8 +32,20 @@ class Data:
         self.train=self.TRAIN[self.TRAIN['match_dt']<pd_date_time]
         self.test=self.TEST[self.TEST['match_dt']<pd_date_time]
         self.matchlevel=self.MATCHLEVEL[self.MATCHLEVEL['match_dt']<pd_date_time]
-
-        print(f"No of bowlers: {len(self.bowl)}")
     
+    def process_row(self,row):
+
+        teamA=row['team1_id']
+        teamB=row['team2_id']
+
+        match_date=pd.to_datetime(row['match_dt'])
+
+        playersA=row['team1_roster_ids'].split(':')
+        playersB=row['team2_roster_ids'].split(':')
+        playersA=[int(i) for i in playersA]
+        playersB=[int(i) for i in playersB]
+        
+        self.initialize(match_date)
+        
 
         
