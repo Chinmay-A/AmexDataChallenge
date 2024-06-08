@@ -38,7 +38,7 @@ class Data:
         teamA=row['team1_id']
         teamB=row['team2_id']
 
-        match_date=pd.to_datetime(row['match_dt'])
+        match_date=row['match_dt']
 
         playersA=row['team1_roster_ids'].split(':')
         playersB=row['team2_roster_ids'].split(':')
@@ -46,6 +46,8 @@ class Data:
         playersB=[int(i) for i in playersB]
         
         self.initialize(match_date)
+    
+    
         
     
 
