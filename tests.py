@@ -1,5 +1,8 @@
 from data import Data
+from try_model import xgboostModel
 
 amexdata=Data()
+model=xgboostModel(amexdata.TRAIN)
 
-amexdata.initialize('03-11-2023')
+model.train()
+
