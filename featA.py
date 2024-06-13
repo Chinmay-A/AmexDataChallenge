@@ -18,6 +18,11 @@ class Data:
         self.TEST['match_dt']=pd.to_datetime(self.TEST['match_dt'], format='%Y-%m-%d')
         self.MATCHLEVEL['match_dt']=pd.to_datetime(self.MATCHLEVEL['match_dt'], format='%Y-%m-%d')
 
+        self.momentum_score_arr=[]
+        self.location_score_arr=[]
+        self.batting_score_arr=[]
+        self.bowling_score_arr=[]
+
         self.bowl=self.BOWLERS
         self.bat=self.BATSMEN
         self.train=self.TRAIN
@@ -47,12 +52,17 @@ class Data:
 
         match_date=row['match_dt']
 
-        playersA=row['team1_roster_ids'].split(':')
-        playersB=row['team2_roster_ids'].split(':')
-        playersA=[int(i) for i in playersA]
-        playersB=[int(i) for i in playersB]
+        # playersA=row['team1_roster_ids'].split(':')
+        # playersB=row['team2_roster_ids'].split(':')
+        # playersA=[int(i) for i in playersA]
+        # playersB=[int(i) for i in playersB]
         
         self.initialize(match_date)
+
+        self.momentum_score_arr.append(self.momentum_score(row))
+        self.location_score_arr.append(self.location_score(row))
+        self.batting_score_arr.append(self.batting_score(row['team1_id'])/self.batting_score(row['team2_id']))
+        self.bowling_score_arr.append(self.bowling_score(row['team1_id'])/self.bowling_score(row['team2_id']))
     
     def location_score(self,row):
 
@@ -177,7 +187,25 @@ class Data:
             zscoresum+=(wicketsbyA[i]-mean)/stddev
         
         return zscoresum/3
-        
+
+    def generate_training_data(self):
+
+        n=len(self.TRAIN)
+
+        #self.TRAIN.reset_index(inplace=True)
+
+        for i in range(1):
+            print(i)
+            curr_row=self.TRAIN.iloc[[i]]
+            #print(curr_row)
+            self.process_row(curr_row) 
+
+        self.TRAIN['momentum_score']=self.momentum_score_arr
+        self.TRAIN['location_score']=self.location_score_arr
+        self.TRAIN['batting_score']=self.batting_score_arr
+        self.TRAIN['bowling_score']=self.bowling_score_arr
+
+        self.TRAIN.to_csv('training_set.csv',index=False)
 
 
 
