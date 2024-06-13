@@ -18,6 +18,9 @@ class Data:
         self.TEST['match_dt']=pd.to_datetime(self.TEST['match_dt'], format='%Y-%m-%d')
         self.MATCHLEVEL['match_dt']=pd.to_datetime(self.MATCHLEVEL['match_dt'], format='%Y-%m-%d')
 
+        print("master")
+        print(self.MATCHLEVEL.columns)
+
         self.momentum_score_arr=[]
         self.location_score_arr=[]
         self.batting_score_arr=[]
@@ -28,22 +31,28 @@ class Data:
         self.train=self.TRAIN
         self.test=self.TEST
         self.matchlevel=self.MATCHLEVEL
+        
 
     def initialize(self,date):
 
-        pd_date_time=pd.to_datetime(date,format='%Y-%m-%d')
+        #pd_date_time=pd.to_datetime(date,format='%Y-%m-%d')
+        pd_date_time=date[0]
+        #print(pd_date_time)
         
         self.bowl=self.BOWLERS[self.BOWLERS['match_dt']<pd_date_time]
         self.bat=self.BATSMEN[self.BATSMEN['match_dt']<pd_date_time]
         self.train=self.TRAIN[self.TRAIN['match_dt']<pd_date_time]
         self.test=self.TEST[self.TEST['match_dt']<pd_date_time]
         self.matchlevel=self.MATCHLEVEL[self.MATCHLEVEL['match_dt']<pd_date_time]
+        
 
         self.bowl=self.bowl.sort_values(by=['match_dt'],ascending=False)
         self.bat=self.bat.sort_values(by=['match_dt'],ascending=False)
         self.train=self.train.sort_values(by=['match_dt'],ascending=False)
-        self.test=self.bowl.sort_values(by=['match_dt'],ascending=False)
-        self.matchlevel=self.bowl.sort_values(by=['match_dt'],ascending=False)
+        self.test=self.test.sort_values(by=['match_dt'],ascending=False)
+        self.matchlevel=self.matchlevel.sort_values(by=['match_dt'],ascending=False)
+        print("master")
+        print(self.matchlevel.columns)
     
     def process_row(self,row):
 
@@ -92,16 +101,19 @@ class Data:
     
     def momentum_score(self,row):
 
-        relevantgamesA=self.matchlevel[self.matchlevel['team1_id']==row['team1_id'] or self.matchlevel['team2_id']==row['team1_id']]
-        relevantgamesB=self.matchlevel[self.matchlevel['team1_id']==row['team2_id'] or self.matchlevel['team2_id']==row['team2_id']]
+        #tryvar=self.matchlevel['team1_id']
+        #print(self.matchlevel.columns)
+        #print(row['team1_id'][0])
+        relevantgamesA=self.matchlevel[(self.matchlevel['team1_id']==row['team1_id'][0]) or (self.matchlevel['team2_id']==row['team1_id'][0])]
+        relevantgamesB=self.matchlevel[(self.matchlevel['team1_id']==row['team2_id'][0]) or (self.matchlevel['team2_id']==row['team2_id'][0])]
         
         if(len(relevantgamesA)>10):
             relevantgamesA=relevantgamesA.head(10)
         if(len(relevantgamesB)>10):
             relevantgamesB=relevantgamesB.head(10)
         
-        team1wins=len(relevantgamesA[relevantgamesA['winner_id']==row['team1_id']])
-        team2wins=len(relevantgamesB[relevantgamesB['winner_id']==row['team2_id']])
+        team1wins=len(relevantgamesA[relevantgamesA['winner_id']==row['team1_id'][0]])
+        team2wins=len(relevantgamesB[relevantgamesB['winner_id']==row['team2_id'][0]])
 
         if(team2wins==0):
             return 1
@@ -150,7 +162,7 @@ class Data:
     
     def bowling_score(self,teamid):
 
-        relevantgamesA=self.matchlevel[self.matchlevel['team1_id']==teamid or self.matchlevel['team2_id']==teamid]
+        relevantgamesA=self.matchlevel[(self.matchlevel['team1_id']==teamid) or (self.matchlevel['team2_id']==teamid)]
 
         if(len(relevantgamesA)>10):
             relevantgamesA=relevantgamesA.head(10)
@@ -195,7 +207,7 @@ class Data:
         #self.TRAIN.reset_index(inplace=True)
 
         for i in range(1):
-            print(i)
+            #print(i)
             curr_row=self.TRAIN.iloc[[i]]
             #print(curr_row)
             self.process_row(curr_row) 
