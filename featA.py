@@ -34,6 +34,7 @@ class Data:
         
 
     def initialize(self,date):
+<<<<<<< HEAD
 
         #pd_date_time=pd.to_datetime(date,format='%Y-%m-%d')
         pd_date_time=date[0]
@@ -45,14 +46,26 @@ class Data:
         self.test=self.TEST[self.TEST['match_dt']<pd_date_time]
         self.matchlevel=self.MATCHLEVEL[self.MATCHLEVEL['match_dt']<pd_date_time]
         
+=======
+        date = date[0]
+        
+        self.bowl=self.BOWLERS[self.BOWLERS['match_dt']<date]
+        self.bat=self.BATSMEN[self.BATSMEN['match_dt']<date]
+        self.train=self.TRAIN[self.TRAIN['match_dt']<date]
+        self.test=self.TEST[self.TEST['match_dt']<date]
+        self.matchlevel=self.MATCHLEVEL[self.MATCHLEVEL['match_dt']<date]
+>>>>>>> 2d3521079ff23bd3f02d8f5004f633a3fdc1ead0
 
         self.bowl=self.bowl.sort_values(by=['match_dt'],ascending=False)
         self.bat=self.bat.sort_values(by=['match_dt'],ascending=False)
         self.train=self.train.sort_values(by=['match_dt'],ascending=False)
         self.test=self.test.sort_values(by=['match_dt'],ascending=False)
         self.matchlevel=self.matchlevel.sort_values(by=['match_dt'],ascending=False)
+<<<<<<< HEAD
         print("master")
         print(self.matchlevel.columns)
+=======
+>>>>>>> 2d3521079ff23bd3f02d8f5004f633a3fdc1ead0
     
     def process_row(self,row):
 
@@ -70,15 +83,15 @@ class Data:
 
         self.momentum_score_arr.append(self.momentum_score(row))
         self.location_score_arr.append(self.location_score(row))
-        self.batting_score_arr.append(self.batting_score(row['team1_id'])/self.batting_score(row['team2_id']))
-        self.bowling_score_arr.append(self.bowling_score(row['team1_id'])/self.bowling_score(row['team2_id']))
+        self.batting_score_arr.append(self.batting_score(teamA)/self.batting_score(teamB))
+        self.bowling_score_arr.append(self.bowling_score(teamA)/self.bowling_score(teamB))
     
     def location_score(self,row):
 
         toss_winner=row['toss winner']
         toss_decision=row['toss decision']
 
-        relevant_games=self.matchlevel[self.matchlevel['ground_id']==row['ground_id']]
+        relevant_games=self.matchlevel[self.matchlevel['ground_id']==row['ground_id'][0]]
 
         if(len(relevant_games)>10):
             relevant_games=relevant_games.head(10)
@@ -87,9 +100,9 @@ class Data:
         batfirstwins=len(relevant_games[relevant_games['by']=='wickets'])
 
         if(bowlfirstwins>batfirstwins):
-            if(toss_winner==row['team1'] and toss_decision=='field'):
+            if(toss_winner==row['team1'][0] and toss_decision=='field'):
                 return 1
-            elif(toss_winner==row['team2'] and toss_decision=='bat'):
+            elif(toss_winner==row['team2'][0] and toss_decision=='bat'):
                 return 1
         else:
             if(toss_winner==row['team1'] and toss_decision=='bat'):
@@ -101,11 +114,8 @@ class Data:
     
     def momentum_score(self,row):
 
-        #tryvar=self.matchlevel['team1_id']
-        #print(self.matchlevel.columns)
-        #print(row['team1_id'][0])
-        relevantgamesA=self.matchlevel[(self.matchlevel['team1_id']==row['team1_id'][0]) or (self.matchlevel['team2_id']==row['team1_id'][0])]
-        relevantgamesB=self.matchlevel[(self.matchlevel['team1_id']==row['team2_id'][0]) or (self.matchlevel['team2_id']==row['team2_id'][0])]
+        relevantgamesA=self.matchlevel[(self.matchlevel['team1_id']==row['team1_id'][0]) | (self.matchlevel['team2_id']==row['team1_id'][0])]
+        relevantgamesB=self.matchlevel[(self.matchlevel['team1_id']==row['team2_id'][0]) | (self.matchlevel['team2_id']==row['team2_id'][0])]
         
         if(len(relevantgamesA)>10):
             relevantgamesA=relevantgamesA.head(10)
