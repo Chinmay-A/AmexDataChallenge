@@ -63,11 +63,20 @@ class Data:
         if self.batting_score(teamB)==0:
             self.batting_score_arr.append(1)
         else:
-            self.batting_score_arr.append(self.batting_score(teamA)/self.batting_score(teamB))
+            if(self.batting_score(teamA)>self.batting_score(teamB)):
+                self.batting_score_arr.append(1)
+                # self.batting_score_arr.append(self.batting_score(teamA)/self.batting_score(teamB))
+            else:
+                self.batting_score_arr.append(0)
         if self.bowling_score(teamB)==0:
             self.bowling_score_arr.append(1)
         else:
-            self.bowling_score_arr.append(self.bowling_score(teamA)/self.bowling_score(teamB))
+            if(self.bowling_score(teamA)>self.bowling_score(teamB)):
+                self.bowling_score_arr.append(1)
+                # self.batting_score_arr.append(self.batting_score(teamA)/self.batting_score(teamB))
+            else:
+                self.bowling_score_arr.append(0)
+            #self.bowling_score_arr.append(self.bowling_score(teamA)/self.bowling_score(teamB))
     
     def location_score(self,row):
 
@@ -110,8 +119,12 @@ class Data:
 
         if(team2wins==0):
             return 1
+
+        if(team1wins>team2wins):
+            return 1
         
-        return team1wins/team2wins
+        
+        return 0
     
     def batting_score(self,teamid):
 
