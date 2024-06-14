@@ -13,8 +13,10 @@ from sklearn.preprocessing import StandardScaler
 class xgboostModel:
     
     def __init__(self,train_data) -> None:
-        self.relevant_features=['winner_id','team_count_50runs_last15','team_winp_last5','team1only_avg_runs_last15','team1_winp_team2_last15','ground_avg_runs_last15']
-        self.train_data=train_data[self.relevant_features]
+        # self.relevant_features=['winner_id','team_count_50runs_last15','team_winp_last5','team1only_avg_runs_last15','team1_winp_team2_last15','ground_avg_runs_last15']
+        # self.train_data=train_data[self.relevant_features]
+        self.train_data=train_data
+
         self.hyperparameters = {
             'n_estimators': 1000,
             'max_depth': 3,
@@ -23,17 +25,14 @@ class xgboostModel:
             'learning_rate': 0.02,
             'eta': 0.02,
         }
-
-        for i in range(len(self.train_data)):
-            self.train_data['winner_id'][i]= self.getlabel(self.train_data['winner_id'][i],self.train_data['team1_id'][i])
         
         self.train, self.validate=train_test_split(self.train_data,train_size=0.75,random_state=42)
         
-        self.trainX=self.train['team_count_50runs_last15','team_winp_last5','team1only_avg_runs_last15','team1_winp_team2_last15','ground_avg_runs_last15']
-        self.trainY=self.train['winner_id']
+        self.trainY=self.train['winners']
+        self.trainX=self.train_data.drop('winners',axis=1)
 
-        self.testX=self.validate['team_count_50runs_last15','team_winp_last5','team1only_avg_runs_last15','team1_winp_team2_last15','ground_avg_runs_last15']
-        self.testY=self.validate['winner_id']
+        self.testY=self.validate['winners']
+        self.testX=self.validate.drop('winners',axis=1)
     
     @staticmethod
     def getlabel(dataA,dataB):
