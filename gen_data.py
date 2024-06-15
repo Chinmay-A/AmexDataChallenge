@@ -1,4 +1,4 @@
-from featA import Data
+from features import Data
 
 data=Data()
 

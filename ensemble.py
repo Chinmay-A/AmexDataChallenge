@@ -27,7 +27,7 @@ class Model:
 
         self.train_data=train_data
         
-        self.train, self.validate=train_test_split(self.train_data,train_size=0.75)
+        self.train, self.validate=train_test_split(self.train_data,train_size=0.75,random_state=42)
         
         self.trainY=self.train['winner']
         self.trainX=self.train.drop('winner',axis=1)
@@ -48,15 +48,15 @@ class Model:
         # self.modelGBM = GradientBoostingClassifier(n_estimators=50,max_depth=2,verbose=0)
         # self.modelGBM.fit(self.trainX, self.trainY)
 
-        self.modelGBMA = GradientBoostingClassifier(n_estimators=80,max_depth=3,verbose=0)
+        self.modelGBMA = CatBoostClassifier(n_estimators=5,max_depth=8,bagging_temperature=1,learning_rate=0.8)
         self.modelGBMA.fit(self.trainX, self.trainY)
 
         # self.modelGBMB = GradientBoostingClassifier(n_estimators=80,max_depth=4,verbose=0)
         # self.modelGBMB.fit(self.trainX, self.trainY)
 
         
-        self.catmodel = CatBoostClassifier(verbose=0, n_estimators=40)
-        self.catmodel.fit(self.trainX, self.trainY)
+        #self.catmodel = CatBoostClassifier(verbose=0, n_estimators=40)
+        #self.catmodel.fit(self.trainX, self.trainY)
 
         # model = CatBoostClassifier(verbose=0, n_estimators=100)
         # cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
@@ -73,15 +73,15 @@ class Model:
         predsA = self.modelGBMA.predict(self.testX)
         # predsB = self.modelGBMB.predict(self.testX)
 
-        predsC=self.catmodel.predict(self.testX)
+        # predsC=self.catmodel.predict(self.testX)
 
-        net_pred=[]
+        # net_pred=[]
 
-        for i in range(len(predsC)):
+        # for i in range(len(predsC)):
 
-            net_pred.append((predsA[i]+predsC[i])/2)
+        #     net_pred.append((predsA[i]+predsC[i])/2)
         
-        return net_pred
+        return predsA
     
     def evaluate(self):
         preds = self.predict()
