@@ -29,6 +29,37 @@ class Data:
         self.test=self.TEST
         self.matchlevel=self.MATCHLEVEL
 
+        self.data={
+            'Awickets_per_inning':[],
+            'Afive_wicket_hauls_frac':[],
+            'Adots_frac':[],
+            'Aavg_economy':[],
+            'Aavg_strike_rate':[],
+            'Aavg_boundaries':[],
+            'Aavg_runs':[],
+            'Afifties_frac':[],
+            'Bwickets_per_inning':[],
+            'Bfive_wicket_hauls_frac':[],
+            'Bdots_frac':[],
+            'Bavg_economy':[],
+            'Bavg_strike_rate':[],
+            'Bavg_boundaries':[],
+            'Bavg_runs':[],
+            'Bfifties_frac':[]
+        }
+
+        self.player_level_cols=self.data.keys()
+
+        self.five_wicket_bowlers=[]
+        self.avg_economy=[]
+        self.dots_frac=[]
+        self.wickets_per_inning=[]
+
+        self.avg_runs=[]
+        self.avg_strike_rate=[]
+        self.fifty_batsmen=[]
+        self.avg_boundaries=[]
+
     def initialize(self,date):
         # date = date[0]
         
@@ -58,6 +89,9 @@ class Data:
         
         self.initialize(match_date)
 
+        # print(len(self.bowl))
+        # print(len(self.bat))
+
         self.momentum_score_arr.append(self.momentum_score(row))
         self.location_score_arr.append(self.location_score(row))
         if self.batting_score(teamB)==0:
@@ -77,6 +111,108 @@ class Data:
             else:
                 self.bowling_score_arr.append(0)
             #self.bowling_score_arr.append(self.bowling_score(teamA)/self.bowling_score(teamB))
+        
+        teamA_players=row['team1_roster_ids'].split(':')
+        teamB_players=row['team2_roster_ids'].split(':')
+
+        Abowl1=[]
+        Bbowl1=[]
+
+        Abowl2=[]
+        Bbowl2=[]
+
+        Abowl3=[]
+        Bbowl3=[]
+
+        Abowl4=[]
+        Bbowl4=[]
+
+        Abat1=[]
+        Bbat1=[]
+
+        Abat2=[]
+        Bbat2=[]
+
+        Abat3=[]
+        Bbat3=[]
+
+        Abat4=[]
+        Bbat4=[]
+
+        for player in teamA_players:
+
+            bowl1,bowl2,bowl3,bowl4=self.get_player_bowling_score(player)
+            bat1,bat2,bat3,bat4=self.get_player_batting_score(player)
+
+            Abowl1.append(bowl1)
+            Abowl2.append(bowl2)
+            Abowl3.append(bowl3)
+            Abowl4.append(bowl4)
+
+            Abat1.append(bat1)
+            Abat2.append(bat2)
+            Abat3.append(bat3)
+            Abat4.append(bat4)
+        
+        for player in teamB_players:
+
+            bowl1,bowl2,bowl3,bowl4=self.get_player_bowling_score(player)
+            bat1,bat2,bat3,bat4=self.get_player_batting_score(player)
+
+            Bbowl1.append(bowl1)
+            Bbowl2.append(bowl2)
+            Bbowl3.append(bowl3)
+            Bbowl4.append(bowl4)
+
+            Bbat1.append(bat1)
+            Bbat2.append(bat2)
+            Bbat3.append(bat3)
+            Bbat4.append(bat4)
+        
+        Abowl4.sort()
+        Bbowl4.sort()
+
+        Abowl1.sort(reverse=True)
+        Abowl2.sort(reverse=True)
+        Abowl3.sort(reverse=True)
+
+        Bbowl1.sort(reverse=True)
+        Bbowl2.sort(reverse=True)
+        Bbowl3.sort(reverse=True)
+
+        Abat4.sort(reverse=True)
+        Bbat4.sort(reverse=True)
+
+        Abat1.sort(reverse=True)
+        Abat2.sort(reverse=True)
+        Abat3.sort(reverse=True)
+
+        Bbat1.sort(reverse=True)
+        Bbat2.sort(reverse=True)
+        Bbat3.sort(reverse=True)
+
+        curr_player_level_data={
+            'Awickets_per_inning':sum(Abowl1[:3])/3,
+            'Afive_wicket_hauls_frac':sum(Abowl2[:3])/3,
+            'Adots_frac':sum(Abowl3[:4])/4,
+            'Aavg_economy':sum(Abowl4[:4])/4,
+            'Aavg_strike_rate':sum(Abat1[:5])/5,
+            'Aavg_boundaries':sum(Abat2[:4])/4,
+            'Aavg_runs':sum(Abat3[:5])/5,
+            'Afifties_frac':sum(Abat4[:4])/4,
+            'Bwickets_per_inning':sum(Bbowl1[:3])/3,
+            'Bfive_wicket_hauls_frac':sum(Bbowl2[:3])/3,
+            'Bdots_frac':sum(Bbowl3[:4])/4,
+            'Bavg_economy':sum(Bbowl4[:4])/4,
+            'Bavg_strike_rate':sum(Bbat1[:5])/5,
+            'Bavg_boundaries':sum(Bbat2[:4])/4,
+            'Bavg_runs':sum(Bbat3[:5])/5,
+            'Bfifties_frac':sum(Bbat4[:4])/4,
+        }
+
+
+        for col in self.player_level_cols:
+            self.data[col].append(curr_player_level_data[col])            
     
     def location_score(self,row):
 
@@ -231,5 +367,69 @@ class Data:
         self.TRAIN['location_score']=self.location_score_arr
         self.TRAIN['batting_score']=self.batting_score_arr
         self.TRAIN['bowling_score']=self.bowling_score_arr
+        
+        self.TRAIN['win_val']=(self.TRAIN['winner_id']==self.TRAIN['team1_id'])
 
-        self.TRAIN.to_csv('training_set.csv',index=False)
+        winnner_val=[]
+        toss_decision=[]
+
+        for i in range(len(self.TRAIN)):
+
+            if(self.TRAIN['win_val'][i]):
+                winnner_val.append(1)
+            else:
+                winnner_val.append(0)
+            
+            if(self.TRAIN['toss winner'][i]==self.TRAIN['team1'][i]):
+                toss_decision.append(1)
+            else:
+                toss_decision.append(0)
+        
+        self.TRAIN['winner']=winnner_val
+        self.TRAIN['toss_winner']=toss_decision
+
+        relevant_cols=['match id','team1_id','team2_id','team_count_50runs_last15','team_winp_last5','team1only_avg_runs_last15','team1_winp_team2_last15','ground_avg_runs_last15','momentum_score','location_score','batting_score','bowling_score','toss_winner','winner']
+
+        for col in self.player_level_cols:
+            self.TRAIN[col]=self.data[col]
+            relevant_cols.append(col)
+        
+        TRAIN_FINAL=self.TRAIN[relevant_cols]
+
+        TRAIN_FINAL.to_csv('training_set_player_level.csv',index=False)
+    
+    def get_player_bowling_score(self,player_id):
+
+        bowling_performance=self.bowl[self.bowl['bowler_id']==float(player_id)]
+
+        if(len(bowling_performance)==0):
+            return 0,0,0,0
+        
+        #print("here")
+
+        wickets_per_inning=sum(bowling_performance['wicket_count'])/len(bowling_performance)
+        five_wicket_hauls_frac=len(bowling_performance[bowling_performance['wicket_count']>=5])/len(bowling_performance)
+        dots_frac=sum(bowling_performance['dots'])/sum(bowling_performance['balls_bowled'])
+        avg_economy=sum(bowling_performance['economy'])/len(bowling_performance)
+
+        print(f'{player_id}: {wickets_per_inning},{five_wicket_hauls_frac},{dots_frac},{avg_economy}')
+
+        return wickets_per_inning,five_wicket_hauls_frac,dots_frac,avg_economy
+    
+    def get_player_batting_score(self,player_id):
+
+        batting_performance=self.bat[self.bat['batsman_id']==float(player_id)]
+
+        if(len(batting_performance)==0):
+            return 0,0,0,0
+        
+        avg_strike_rate=sum(batting_performance['strike_rate'])/len(batting_performance)
+        avg_boundaries=(sum(batting_performance['Fours'])+sum(batting_performance['Sixes']))/len(batting_performance)
+        avg_runs=sum(batting_performance['runs'])/len(batting_performance)
+
+        fifties_frac=len(batting_performance['runs']>=50)/len(batting_performance)
+
+        return avg_strike_rate,avg_boundaries,avg_runs,fifties_frac
+    
+
+

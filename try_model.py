@@ -28,13 +28,13 @@ class xgboostModel:
             'eta': 0.015,
         }
         
-        self.train, self.validate=train_test_split(self.train_data,train_size=0.75,random_state=21)
+        self.train, self.validate=train_test_split(self.train_data,train_size=0.7)
         
-        self.trainY=self.train['winners']
-        self.trainX=self.train.drop('winners',axis=1)
+        self.trainY=self.train['winner']
+        self.trainX=self.train.drop('winner',axis=1)
 
-        self.testY=self.validate['winners']
-        self.testX=self.validate.drop('winners',axis=1)
+        self.testY=self.validate['winner']
+        self.testX=self.validate.drop('winner',axis=1)
 
         print("Init successful")
     
@@ -43,6 +43,7 @@ class xgboostModel:
         if(dataA==dataB):
             return 1
         return 0
+    
     def train_model(self):
 
         # print("here")
