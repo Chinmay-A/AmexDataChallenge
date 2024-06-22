@@ -16,10 +16,10 @@ features = {
     #     'description': 'Label encoding of the lighting condition of the match',
     #     'generator': lighting
     # },
-    # 'team1v2_win_prob': {
-    #     'description': 'Win probability of team1 against team2',
-    #     'generator': team1v2_win_prob
-    # },
+    'team1v2_win_prob': {
+        'description': 'Win probability of team1 against team2',
+        'generator': team1v2_win_prob
+    },
     # 'team1_games_played': {
     #     'description': 'Number of games played by team1',
     #     'generator': team1_games_played
@@ -32,10 +32,10 @@ features = {
     #     'description': 'Whether team1 has played more games than team2',
     #     'generator': played_more_games
     # },
-    # 'much_more_games_played': {
-    #     'description': 'Whether team1 has played much more games than team2',
-    #     'generator': much_more_games_played
-    # },
+    'much_more_games_played': {
+        'description': 'Whether either of the team has played much more games than the other team',
+        'generator': much_more_games_played
+    },
     # 'more_win_percent': {
     #     'description': 'Whether team1 has higher win percentage than team2',
     #     'generator': more_win_percent
@@ -84,7 +84,7 @@ hyperparams = {
             'subsample':0.8,
             'colsample_bytree':0.8
         },
-        'num_rounds': 10,
+        'num_rounds': 100,
     },
     'catboost': {
         'params': {

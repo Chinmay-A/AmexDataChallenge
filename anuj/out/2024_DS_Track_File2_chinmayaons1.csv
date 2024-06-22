@@ -1,2 +1,4 @@
 feat_id,feat_name,feat_description,model_feat_imp_train,feat_rank_train
-1,winp_last5_categorized,Win probability of team1 in last 5 matches,100.0%,1
+1,winp_last5_categorized,Win probability of team1 in last 5 matches,37.87234479230411%,1
+2,much_more_games_played,Whether either of the team has played much more games than the other team,34.94544782866985%,2
+3,team1v2_win_prob,Win probability of team1 against team2,27.182207379026046%,3

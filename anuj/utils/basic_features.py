@@ -80,4 +80,9 @@ def much_more_games_played(row, data):
     team2 = row['team2_id']
     team1_matches = data['match'][(data['match']['team1_id'] == team1) | (data['match']['team2_id'] == team1)]
     team2_matches = data['match'][(data['match']['team1_id'] == team2) | (data['match']['team2_id'] == team2)]
-    return (len(team1_matches) > 2 * len(team2_matches)) and (len(team1_matches) > len(team2_matches) + 8)
+    if (len(team1_matches) > 2 * len(team2_matches)) and (len(team1_matches) > len(team2_matches) + 8):
+        return 0
+    elif (len(team2_matches) > 2 * len(team1_matches)) and (len(team2_matches) > len(team1_matches) + 8):
+        return 2
+    else:
+        return 1

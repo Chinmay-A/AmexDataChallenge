@@ -69,10 +69,13 @@ def train_catboost_model():
     )
     model.fit(trainX, trainY)
 
-    train_preds_prob = model.predict(trainX)
-    val_preds_prob = model.predict(validateX)
-    train_accuracy = accuracy_score(trainY, train_preds_prob)
-    val_accuracy = accuracy_score(validateY, val_preds_prob)
+    train_preds_prob = model.predict_proba(trainX)[:,1]
+    val_preds_prob = model.predict_proba(validateX)[:,1]
+    train_preds = [1 if i > 0.5 else 0 for i in train_preds_prob]
+    val_preds = [1 if i > 0.5 else 0 for i in val_preds_prob]
+
+    train_accuracy = accuracy_score(trainY, train_preds)
+    val_accuracy = accuracy_score(validateY, val_preds)
     print("-"*50)
     print(f'Model: CatBoost\nTrain-set Accuracy: {train_accuracy}\nValidation-set Accuracy: {val_accuracy}')
     print("-"*50)
