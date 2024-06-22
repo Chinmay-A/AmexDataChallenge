@@ -24,7 +24,7 @@ lgbm_model = load_lgbm_model()
 catboost_model = load_catboost_model()
 
 def get_predictions(data):
-    xgb_preds = xgb_model.predict(xgb.DMatrix(data))
+    xgb_preds = xgb_model.predict(xgb.DMatrix(data, feature_names=list(trainX.columns)))
     lgbm_preds = lgbm_model.predict(data)
     catboost_preds = catboost_model.predict(data)
     return xgb_preds, lgbm_preds, catboost_preds
@@ -47,19 +47,26 @@ def get_feature_scores():
         'lightgbm': lgbm_model.feature_importance(importance_type='split'),
         'catboost': catboost_model.get_feature_importance()
     }
-    xgboost_np_array = np.array(list(feature_scores['xgboost'].values()))
-    lightgbm_np_array = np.array(list(feature_scores['lightgbm']))
-    catboost_np_array = np.array(list(feature_scores['catboost']))
-
-    average_scores = (xgboost_np_array + lightgbm_np_array + catboost_np_array) / 3
-    percentage_scores = (average_scores / average_scores.sum()) * 100
 
     for col in utils.features.keys():
         utils.features[col]['score'] = 0.0
 
-    feature_names = trainX.columns
-    for i, column in enumerate(feature_names):
-        utils.features[column]['score'] = percentage_scores[i]
+    for col in feature_scores['xgboost'].keys():
+        utils.features[col]['score'] += feature_scores['xgboost'][col]
+    for i, col in enumerate(trainX.columns):
+        utils.features[col]['score'] += feature_scores['lightgbm'][i]
+    for i, col in enumerate(trainX.columns):
+        utils.features[col]['score'] += feature_scores['catboost'][i]
+
+    for col in utils.features.keys():
+        utils.features[col]['score'] /= 3
+
+    total_score = 0.0
+    for col in utils.features.keys():
+        total_score += utils.features[col]['score']
+    for col in utils.features.keys():
+        utils.features[col]['score'] /= total_score
+        utils.features[col]['score'] *= 100
 
     sorted_features = sorted(utils.features.items(), key=lambda x: x[1]['score'], reverse=True)
     for i, feature in enumerate(sorted_features):

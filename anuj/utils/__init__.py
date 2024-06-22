@@ -12,46 +12,42 @@ from .slightly_complex import *
 # it should return a single value, the value of the feature
 
 features = {
-    # 'lighting': {
-    #     'description': 'Label encoding of the lighting condition of the match',
-    #     'generator': lighting
+    # 'team1v2_win_prob': {
+    #     'description': 'Whether team1 has won more matches against team2 or not',
+    #     'generator': team1v2_win_prob
     # },
-    'team1v2_win_prob': {
-        'description': 'Win probability of team1 against team2',
-        'generator': team1v2_win_prob
-    },
-    # 'team1_games_played': {
-    #     'description': 'Number of games played by team1',
-    #     'generator': team1_games_played
-    # },
-    # 'team2_games_played': {
-    #     'description': 'Number of games played by team2',
-    #     'generator': team2_games_played
-    # },
-    # 'more_games_played': {
-    #     'description': 'Whether team1 has played more games than team2',
-    #     'generator': played_more_games
-    # },
-    'much_more_games_played': {
-        'description': 'Whether either of the team has played much more games than the other team',
-        'generator': much_more_games_played
-    },
-    # 'more_win_percent': {
-    #     'description': 'Whether team1 has higher win percentage than team2',
-    #     'generator': more_win_percent
+    # 'much_more_games_played': {
+    #     'description': 'Whether either of the team has played much more games than the other team',
+    #     'generator': much_more_games_played
     # },
     'winp_last5_categorized': {
         'description': 'Win probability of team1 in last 5 matches',
         'generator': winp_last5_categorized
     },
-    # 'team1_win_prob': {
-    #     'description': 'Win probability of team1 in all matches',
-    #     'generator': team1_win_prob
+    # 'inning1_perf': {
+    #     'description': 'Performance of team1 in inning1 categorized with respect to average performance',
+    #     'generator': inning1_perf
     # },
-    # 'team2_win_prob': {
-    #     'description': 'Win probability of team2 in all matches',
-    #     'generator': team2_win_prob
+    # 'inning2_perf': {
+    #     'description': 'Performance of team2 in inning2 categorized with respect to average performance',
+    #     'generator': inning2_perf
     # },
+    'has_good_bowlers': {
+        'description': 'If team has some bowlers taking 4 wickets or more',
+        'generator': has_good_bowlers
+    },
+    'has_good_batsman': {
+        'description': 'If team has some batsmen getting 50 runs or more',
+        'generator': has_good_batsmen
+    },
+    'usual_wins': {
+        'description': 'Is the toss decision aligned with the teams strengths',
+        'generator': usual_wins
+    },
+    'experience_score': {
+        'description': 'Evaluates the experience of players who satisfy the performance criteria',
+        'generator': experience_score
+    },
 
 }
 

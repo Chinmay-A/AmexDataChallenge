@@ -12,23 +12,26 @@ import pydotplus
 dataX = pd.read_csv('./out/dataX.csv')
 dataY = pd.read_csv('./out/dataY.csv')
 
+feature_names = list(dataX.columns)
+
 dataX = np.array(dataX)
 dataY = np.array(dataY).ravel()
 
 trainX, validateX, trainY, validateY = train_test_split(
     dataX, dataY, test_size=0.3, 
-    random_state=45, shuffle=True
+    random_state=48, shuffle=True
     )
 
 def train_xgb_model():
     # Train an XGBoost model
     model = xgb.train(
         utils.hyperparams['xgboost']['params'],
-        xgb.DMatrix(trainX, label=trainY),
+        xgb.DMatrix(trainX, label=trainY, feature_names=feature_names),
         utils.hyperparams['xgboost']['num_rounds'],
+        
     )
-    train_preds_prob = model.predict(xgb.DMatrix(trainX))
-    val_preds_prob = model.predict(xgb.DMatrix(validateX))
+    train_preds_prob = model.predict(xgb.DMatrix(trainX, feature_names=feature_names))
+    val_preds_prob = model.predict(xgb.DMatrix(validateX, feature_names=feature_names))
     train_preds = [1 if i > 0.5 else 0 for i in train_preds_prob]
     val_preds = [1 if i > 0.5 else 0 for i in val_preds_prob]
 

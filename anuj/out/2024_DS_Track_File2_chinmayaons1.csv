@@ -1,4 +1,6 @@
 feat_id,feat_name,feat_description,model_feat_imp_train,feat_rank_train
-1,winp_last5_categorized,Win probability of team1 in last 5 matches,37.87234479230411%,1
-2,much_more_games_played,Whether either of the team has played much more games than the other team,34.94544782866985%,2
-3,team1v2_win_prob,Win probability of team1 against team2,27.182207379026046%,3
+1,has_good_bowlers,If team has some bowlers taking 4 wickets or more,26.84064832051007%,1
+2,winp_last5_categorized,Win probability of team1 in last 5 matches,22.586734227388757%,2
+3,usual_wins,Is the toss decision aligned with the teams strengths,19.82083079279411%,3
+4,has_good_batsman,If team has some batsmen getting 50 runs or more,18.5823839099237%,4
+5,experience_score,Evaluates the experience of players who satisfy the performance criteria,12.169402749383368%,5

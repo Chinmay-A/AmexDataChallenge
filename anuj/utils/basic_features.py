@@ -18,10 +18,8 @@ def team1v2_win_prob(row, data):
     team1_wins += len(team2v1_matches[team2v1_matches['winner_id'] == team1])
 
     total_matches = len(team1v2_matches) + len(team2v1_matches)
-    if total_matches == 0 or team1_wins == total_matches / 2:
+    if team1_wins > total_matches / 2:
         return 1
-    elif team1_wins > total_matches / 2:
-        return 2
     else:
         return 0
 
@@ -81,8 +79,8 @@ def much_more_games_played(row, data):
     team1_matches = data['match'][(data['match']['team1_id'] == team1) | (data['match']['team2_id'] == team1)]
     team2_matches = data['match'][(data['match']['team1_id'] == team2) | (data['match']['team2_id'] == team2)]
     if (len(team1_matches) > 2 * len(team2_matches)) and (len(team1_matches) > len(team2_matches) + 8):
-        return 0
-    elif (len(team2_matches) > 2 * len(team1_matches)) and (len(team2_matches) > len(team1_matches) + 8):
         return 2
+    elif (len(team2_matches) > 2 * len(team1_matches)) and (len(team2_matches) > len(team1_matches) + 8):
+        return 0
     else:
         return 1
