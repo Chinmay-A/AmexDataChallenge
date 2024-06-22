@@ -14,10 +14,13 @@ features = {
     'feature1': {
         'description': 'This is feature1',
         'generator': f1
-    },
-    'x1': {
-        'description': 'This is x0',
-    },
+    }
+}
+
+ensemble_ratio = {
+    'xgboost': 0.33,
+    'lightgbm': 0.33,
+    'catboost': 0.34,
 }
 
 hyperparams = {

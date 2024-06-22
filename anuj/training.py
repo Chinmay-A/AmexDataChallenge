@@ -25,17 +25,17 @@ def train_xgb_model():
         xgb.DMatrix(trainX, label=trainY),
         utils.hyperparams['xgboost']['num_rounds'],
     )
-    train_preds = model.predict(xgb.DMatrix(trainX))
-    val_preds = model.predict(xgb.DMatrix(validateX))
-    train_preds = [1 if i > 0.5 else 0 for i in train_preds]
-    val_preds = [1 if i > 0.5 else 0 for i in val_preds]
+    train_preds_prob = model.predict(xgb.DMatrix(trainX))
+    val_preds_prob = model.predict(xgb.DMatrix(validateX))
+    train_preds = [1 if i > 0.5 else 0 for i in train_preds_prob]
+    val_preds = [1 if i > 0.5 else 0 for i in val_preds_prob]
 
     train_accuracy = accuracy_score(trainY, train_preds)
     val_accuracy = accuracy_score(validateY, val_preds)
     print("-"*50)
     print(f'Model: XGBoost\nTrain-set Accuracy: {train_accuracy}\nValidation-set Accuracy: {val_accuracy}')
     print("-"*50)
-    return model
+    return model, train_preds_prob, val_preds_prob
 
 def train_lgbm_model():
     # Train an LightGBM model
@@ -44,17 +44,17 @@ def train_lgbm_model():
         lgb.Dataset(trainX, label=trainY),
         utils.hyperparams['lightgbm']['num_rounds'],
     )
-    train_preds = model.predict(trainX)
-    val_preds = model.predict(validateX)
-    train_preds = [1 if i > 0.5 else 0 for i in train_preds]
-    val_preds = [1 if i > 0.5 else 0 for i in val_preds]
+    train_preds_prob = model.predict(trainX)
+    val_preds_prob = model.predict(validateX)
+    train_preds = [1 if i > 0.5 else 0 for i in train_preds_prob]
+    val_preds = [1 if i > 0.5 else 0 for i in val_preds_prob]
 
     train_accuracy = accuracy_score(trainY, train_preds)
     val_accuracy = accuracy_score(validateY, val_preds)
     print("-"*50)
     print(f'Model: LightGBM\nTrain-set Accuracy: {train_accuracy}\nValidation-set Accuracy: {val_accuracy}')
     print("-"*50)
-    return model
+    return model, train_preds_prob, val_preds_prob
 
 def train_catboost_model():
     # Train an CatBoost model
@@ -67,25 +67,38 @@ def train_catboost_model():
     )
     model.fit(trainX, trainY)
 
-    train_preds = model.predict(trainX)
-    val_preds = model.predict(validateX)
-    train_accuracy = accuracy_score(trainY, train_preds)
-    val_accuracy = accuracy_score(validateY, val_preds)
+    train_preds_prob = model.predict(trainX)
+    val_preds_prob = model.predict(validateX)
+    train_accuracy = accuracy_score(trainY, train_preds_prob)
+    val_accuracy = accuracy_score(validateY, val_preds_prob)
     print("-"*50)
     print(f'Model: CatBoost\nTrain-set Accuracy: {train_accuracy}\nValidation-set Accuracy: {val_accuracy}')
     print("-"*50)
-    return model
+    return model, train_preds_prob, val_preds_prob
 
 def train_and_save_models():
-    model = train_xgb_model()
+    model, xgb_train_preds, xgb_test_preds = train_xgb_model()
     model.save_model('./out/xgb_model.json')
 
-    model = train_lgbm_model()
+    model, lgbm_train_preds, lgbm_test_preds = train_lgbm_model()
     model.save_model('./out/lgbm_model.json')
     
-    model = train_catboost_model()
+    model, cat_train_preds, cat_test_preds = train_catboost_model()
     model.save_model('./out/catboost_model.json')
 
+    # print results for ensemble as well
+    ensemble_train_preds = (xgb_train_preds * utils.ensemble_ratio['xgboost']) + \
+        (lgbm_train_preds * utils.ensemble_ratio['lightgbm']) + \
+        (cat_train_preds * utils.ensemble_ratio['catboost'])
+    ensemble_test_preds = (xgb_test_preds * utils.ensemble_ratio['xgboost']) + \
+        (lgbm_test_preds * utils.ensemble_ratio['lightgbm']) + \
+        (cat_test_preds * utils.ensemble_ratio['catboost'])
+
+    train_accuracy = accuracy_score(trainY, [1 if i > 0.5 else 0 for i in ensemble_train_preds])
+    val_accuracy = accuracy_score(validateY, [1 if i > 0.5 else 0 for i in ensemble_test_preds])
+    print("-"*50)
+    print(f'Model: Ensemble\nTrain-set Accuracy: {train_accuracy}\nValidation-set Accuracy: {val_accuracy}')
+    print("-"*50)
     print('Models saved successfully!')
 
 train_and_save_models()

@@ -31,7 +31,9 @@ def get_predictions(data):
 
 def ensemble_predictions(data):
     xgb_preds, lgbm_preds, catboost_preds = get_predictions(data)
-    ensemble_preds = (xgb_preds + lgbm_preds + catboost_preds) / 3
+    ensemble_preds = (utils.ensemble_ratio['xgboost'] * xgb_preds) + \
+        (utils.ensemble_ratio['lightgbm'] * lgbm_preds) + \
+        (utils.ensemble_ratio['catboost'] * catboost_preds)
     return ensemble_preds
 
 def predict(data):

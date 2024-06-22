@@ -1,7 +1,9 @@
 import utils
 import pandas as pd
 import numpy as np
-use_features = ['feature1']
+
+# use_features = ['feature1']
+use_features = utils.features.keys()
 
 raw_data = {
     'bat': pd.read_csv('./datasets/batsman_data.csv'),
