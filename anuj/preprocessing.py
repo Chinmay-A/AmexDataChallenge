@@ -19,7 +19,7 @@ for key in raw_data:
 def filter_data(data, match_date):
     filtered_data = {}
     for key in data:
-        filtered_data[key] = data[key][data[key]['match_dt'] < match_date]
+        filtered_data[key] = data[key][data[key]['match_dt'] < match_date - pd.DateOffset(days=1)]
 
     return filtered_data
 

@@ -6,6 +6,8 @@ import lightgbm as lgb
 import xgboost as xgb
 from catboost import CatBoostClassifier
 import utils
+import graphviz
+import pydotplus
 
 dataX = pd.read_csv('./out/dataX.csv')
 dataY = pd.read_csv('./out/dataY.csv')
@@ -15,7 +17,7 @@ dataY = np.array(dataY).ravel()
 
 trainX, validateX, trainY, validateY = train_test_split(
     dataX, dataY, test_size=0.3, 
-    random_state=42, shuffle=True
+    random_state=45, shuffle=True
     )
 
 def train_xgb_model():
@@ -79,6 +81,10 @@ def train_catboost_model():
 def train_and_save_models():
     model, xgb_train_preds, xgb_test_preds = train_xgb_model()
     model.save_model('./out/xgb_model.json')
+    # plot xgb_tree
+    dot_data = xgb.to_graphviz(model, num_trees=0)
+    graph = pydotplus.graph_from_dot_data(dot_data.source)
+    graph.write_pdf("./out/xgb_tree.pdf")
 
     model, lgbm_train_preds, lgbm_test_preds = train_lgbm_model()
     model.save_model('./out/lgbm_model.json')

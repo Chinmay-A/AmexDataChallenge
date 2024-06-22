@@ -1,2 +1,2 @@
 feat_id,feat_name,feat_description,model_feat_imp_train,feat_rank_train
-1,feature1,This is feature1,100.0%,1
+1,winp_last5_categorized,Win probability of team1 in last 5 matches,100.0%,1

@@ -39,7 +39,6 @@ def ensemble_predictions(data):
 def predict(data):
     data_np = np.array(data)
     ensemble_preds = ensemble_predictions(data_np)
-    ensemble_preds = np.array([1 if i > 0.5 else 0 for i in ensemble_preds])
     return ensemble_preds
 
 def get_feature_scores():
