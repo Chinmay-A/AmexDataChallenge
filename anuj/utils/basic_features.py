@@ -1,12 +1,46 @@
 import random
 
 def lighting(row, data):
+    team1_day_matches = data['match'][
+        ((data['match']['team1_id'] == row['team1_id']) & ((data['match']['lighting'] == 'day match') | (data['match']['lighting'] == 'day/night match')))
+        | ((data['match']['team2_id'] == row['team1_id']) & ((data['match']['lighting'] == 'day match')))
+        ]
+        
+    team1_night_matches = data['match'][
+        ((data['match']['team2_id'] == row['team1_id']) & ((data['match']['lighting'] == 'night match') | (data['match']['lighting'] == 'day/night match')))
+        | ((data['match']['team1_id'] == row['team1_id']) & ((data['match']['lighting'] == 'night match')))
+        ]
+    
+    team2_day_matches = data['match'][
+        ((data['match']['team1_id'] == row['team2_id']) & ((data['match']['lighting'] == 'day match') | (data['match']['lighting'] == 'day/night match')))
+        | ((data['match']['team2_id'] == row['team2_id']) & ((data['match']['lighting'] == 'day match')))
+        ]
+    
+    team2_night_matches = data['match'][
+        ((data['match']['team2_id'] == row['team2_id']) & ((data['match']['lighting'] == 'night match') | (data['match']['lighting'] == 'day/night match')))
+        | ((data['match']['team1_id'] == row['team2_id']) & ((data['match']['lighting'] == 'night match')))
+        ]
+
+    team1_day_wins = len(team1_day_matches[team1_day_matches['winner_id'] == row['team1_id']])
+    team1_night_wins = len(team1_night_matches[team1_night_matches['winner_id'] == row['team1_id']])
+    team2_day_wins = len(team2_day_matches[team2_day_matches['winner_id'] == row['team2_id']])
+    team2_night_wins = len(team2_night_matches[team2_night_matches['winner_id'] == row['team2_id']])
+
     if row['lighting'] == 'day/night match':
-        return 1
+        if team1_day_wins * (len(team2_day_matches) + len(team2_night_matches)) > team2_night_wins * (len(team1_day_matches) + len(team1_night_matches)):
+            return 1
+        else:
+            return 0
     elif row['lighting'] == 'day match':
-        return 0
+        if team1_day_wins * (team2_day_wins + team2_night_wins) > team2_day_wins * (team1_day_wins + team1_night_wins):
+            return 1
+        else:
+            return 0    
     elif row['lighting'] == 'night match':
-        return 2
+        if team1_night_wins * (team2_day_wins + team2_night_wins) > team2_night_wins * (team1_day_wins + team1_night_wins):
+            return 1
+        else:
+            return 0
     
 def team1v2_win_prob(row, data):
     team1 = row['team1_id']

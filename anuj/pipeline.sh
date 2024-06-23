@@ -31,6 +31,9 @@ while getopts "ipto" option; do
             echo "Generating Output Files using predictions from model..."
             # Add your make_predictions.py execution command here
             python3 predict.py
+
+            echo "Running sanity check on output files..."
+            python3 sanity_check.py ./out/2024_DS_Track_File1_chinmayaons1.csv ./out/2024_DS_Track_File2_chinmayaons1.csv ./datasets/train_data.csv
             ;;
         *)
             # Invalid option

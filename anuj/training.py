@@ -19,7 +19,7 @@ dataY = np.array(dataY).ravel()
 
 trainX, validateX, trainY, validateY = train_test_split(
     dataX, dataY, test_size=0.3, 
-    random_state=48, shuffle=True
+    random_state=96, shuffle=True
     )
 
 def train_xgb_model():

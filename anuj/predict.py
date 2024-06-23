@@ -94,7 +94,7 @@ def get_output_csv1():
     train_output['win_pred_team_id'] = np.where(predTrain > 0.5, rawTrain['team1_id'], rawTrain['team2_id'])
     train_output['win_pred_score'] = predTrain
     train_output['train_algorithm'] = 'xgboost;lightgbm;catboost'
-    train_output['Ensemble?'] = 'yes'
+    train_output['is_ensemble'] = 'yes'
     train_output['train_hps_trees'] = str(utils.hyperparams['xgboost']['num_rounds']) + ';' + \
         str(utils.hyperparams['lightgbm']['num_rounds']) + ';' + str(utils.hyperparams['catboost']['params']['iterations'])
     train_output['train_hps_depth'] = str(utils.hyperparams['xgboost']['params']['max_depth']) + ';' + \
@@ -103,10 +103,11 @@ def get_output_csv1():
         str(utils.hyperparams['lightgbm']['params']['learning_rate']) + ';' + str(utils.hyperparams['catboost']['params']['learning_rate'])
 
     top10_features = feature_with_importances[:min(10, len(feature_with_importances))]
-    for feature in top10_features:
-        if feature[1]['score'] <= 0.0001:
-            break
-        train_output[f'indep_feat_id{feature[1]["id"]}'] = trainX[feature[0]]
+    for i in range(10):
+        if i < len(top10_features):
+            train_output[f'indep_feat_id{i+1}'] = trainX[top10_features[i][0]]
+        else:
+            train_output[f'indep_feat_id{i+1}'] = 0
 
     test_output = pd.DataFrame({
         'match id': rawTest['match id'],
@@ -115,7 +116,7 @@ def get_output_csv1():
     test_output['win_pred_team_id'] = np.where(predTest > 0.5, rawTest['team1_id'], rawTest['team2_id'])
     test_output['win_pred_score'] = predTest
     test_output['train_algorithm'] = 'xgboost;lightgbm;catboost'
-    test_output['Ensemble?'] = 'yes'
+    test_output['is_ensemble'] = 'yes'
     test_output['train_hps_trees'] = str(utils.hyperparams['xgboost']['num_rounds']) + ';' + \
         str(utils.hyperparams['lightgbm']['num_rounds']) + ';' + str(utils.hyperparams['catboost']['params']['iterations'])
     test_output['train_hps_depth'] = str(utils.hyperparams['xgboost']['params']['max_depth']) + ';' + \
@@ -123,11 +124,12 @@ def get_output_csv1():
     test_output['train_hps_lr'] = str(utils.hyperparams['xgboost']['params']['eta']) + ';' + \
         str(utils.hyperparams['lightgbm']['params']['learning_rate']) + ';' + str(utils.hyperparams['catboost']['params']['learning_rate'])
 
-
-    for feature in top10_features:
-        if feature[1]['score'] <= 0.001:
-            break
-        test_output[f'indep_feat_id{feature[1]["id"]}'] = testX[feature[0]]
+        
+    for i in range(10):
+        if i < len(top10_features):
+            test_output[f'indep_feat_id{i+1}'] = testX[top10_features[i][0]]
+        else:
+            test_output[f'indep_feat_id{i+1}'] = 0
     
     output_csv1 = pd.concat([train_output, test_output])
     output_csv1.to_csv('./out/2024_DS_Track_File1_chinmayaons1.csv', index=False)
@@ -146,7 +148,7 @@ def get_output_csv2():
             'feat_id': feature[1]['id'],
             'feat_name': feature[0],
             'feat_description': feature[1]['description'],
-            'model_feat_imp_train': str(feature[1]['score']) + "%",
+            'model_feat_imp_train': np.round(feature[1]['score'], 2),
             'feat_rank_train': feature[1]['id']
         }, ignore_index=True)
 

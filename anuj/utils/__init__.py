@@ -48,6 +48,10 @@ features = {
         'description': 'Evaluates the experience of players who satisfy the performance criteria',
         'generator': experience_score
     },
+    # 'lighting': {
+    #     'description': 'Whether the match is played in daylight or under lights',
+    #     'generator': lighting
+    # },
 
 }
 
