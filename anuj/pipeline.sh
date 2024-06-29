@@ -33,7 +33,7 @@ while getopts "ipto" option; do
             python3 predict.py
 
             echo "Running sanity check on output files..."
-            python3 sanity_check.py ./out/2024_DS_Track_File1_chinmayaons1.csv ./out/2024_DS_Track_File2_chinmayaons1.csv ./datasets/train_data.csv
+            python3 sanity_check_r2.py ./out/2024_DS_Track_File1_chinmayaons1.csv ./datasets/test_data.csv
             ;;
         *)
             # Invalid option
